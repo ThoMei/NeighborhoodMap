@@ -75,15 +75,15 @@ class App extends Component {
 
   render() {
     /* got this code from... https://stackoverflow.com/questions/41436253/how-to-filter-list-while-typing-with-input-field and it doesn't seem to be working for what I need.
-    How do I update my state.locations based on state.query? 
+    How do I update my state.locations based on state.query?
     */
-    const locales = this.state.locations.filter(d => this.state.query === '' || d.includes(this.state.query)).map(function(d, index) {
+    const locales = this.state.locations.filter(d => this.state.query === '' || d.title.toString().toLowerCase().indexOf(this.state.query) !==-1 ).map(function(d, index) {
       return d;
     });
 
     return (
       <main>
-        <Menu title={this.state.locations}/>
+        <Menu title={locales}/>
         <input value={this.state.query} type="text" onChange={event => this.textInput(event)}/>
         <button id="mapReset">Reset Map</button>
         <div id="map"></div>
