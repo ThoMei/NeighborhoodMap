@@ -16,15 +16,17 @@ class App extends Component {
       {title: 'Momofuku Noodle Bar', location: {lat: 40.729233, lng: -73.98451}},
       {title: 'Minca', location: {lat: 40.723998, lng: -73.982949 }},
       {title: 'Momosan Ramen & Sake', location: {lat: 40.749926, lng: -73.977}}
-    ]
+    ],
+    query: ""
   }
 }
+  textInput(e) {
+    this.setState({query: e.target.value})
+  }
 
   componentDidMount() {
     window.initMap = this.initMap;
     window.state = this.state;
-    console.log(this.state.locations[0].location.lat);
-    console.log(this.state.locations[0].location.lng);
     loadJS('https://maps.googleapis.com/maps/api/js?key=AIzaSyB-mwNzKac0ksFHUQAFD5HXTbYmvrtBIrg&v=3&callback=initMap')
 }
 
@@ -43,22 +45,47 @@ class App extends Component {
       });
 
       const infowindow = new window.google.maps.InfoWindow({
-        content: marker.title
+        content: `${marker.title}`
   });
 
-        marker.addListener('click', function(){
-          infowindow.open(map, marker)
-        })
-      })
-
+  function mapReset() {
+    map.panTo({lat: 40.740775, lng: -73.983935});
+    map.setZoom(14)
   }
 
+/*
+      mapReset.addListener('click', function(){
+        map.panTo(map.center);
+        map.setZoom(14)
+      })
+*/
 
+    /*    mapReset.addListener('click', function(){
+          map.panTo(map.center);
+          map.setZoom(14)
+        })
+*/
+        marker.addListener('click', function(){
+          infowindow.open(map, marker);
+          map.panTo(marker.position);
+          map.setZoom(20)
+        })
+      })
+  }
 
   render() {
+    /* got this code from... https://stackoverflow.com/questions/41436253/how-to-filter-list-while-typing-with-input-field and it doesn't seem to be working for what I need.
+    How do I update my state.locations based on state.query? 
+    */
+    const locales = this.state.locations.filter(d => this.state.query === '' || d.includes(this.state.query)).map(function(d, index) {
+      return d;
+    });
+
     return (
       <main>
         <Menu title={this.state.locations}/>
+        <input value={this.state.query} type="text" onChange={event => this.textInput(event)}/>
+        <button id="mapReset">Reset Map</button>
         <div id="map"></div>
       </main>
 
